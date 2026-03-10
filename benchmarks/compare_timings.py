@@ -1,7 +1,7 @@
 """compare timings across 2 benchmarks."""
 
-import pickle
 import argparse
+import pickle
 import sys
 
 import numpy as np
@@ -10,15 +10,35 @@ import pandas as pd
 filename1 = "timings_1"
 filename2 = "timings_2"
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Compare timings across 2 benchmarks and display % changes with 95% CI."
     )
-    parser.add_argument("--file1", default="timings_1", help="Base name of the first pickle file (without .pickle)")
-    parser.add_argument("--file2", default="timings_2", help="Base name of the second pickle file (without .pickle)")
-    parser.add_argument("--n", type=int, default=1000, help="Number of bootstrap samples (default: 1000)")
-    parser.add_argument("--threshold", type=float, default=3.0, help="Percentage threshold for flagging significant change (default: 3.0)")
+    parser.add_argument(
+        "--file1",
+        default="timings_1",
+        help="Base name of the first pickle file (without .pickle)",
+    )
+    parser.add_argument(
+        "--file2",
+        default="timings_2",
+        help="Base name of the second pickle file (without .pickle)",
+    )
+    parser.add_argument(
+        "--n",
+        type=int,
+        default=1000,
+        help="Number of bootstrap samples (default: 1000)",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=3.0,
+        help="Percentage threshold for flagging significant change (default: 3.0)",
+    )
     return parser.parse_args()
+
 
 def load_pickle(filename: str) -> dict:
     path = f"{filename}.pickle"
@@ -31,6 +51,7 @@ def load_pickle(filename: str) -> dict:
     except Exception as e:
         print(f"Error loading '{path}': {e}", file=sys.stderr)
         sys.exit(1)
+
 
 with open(f"{filename1}.pickle", "rb") as handle:
     timings_1 = pickle.load(handle)  # noqa: S301
@@ -67,7 +88,7 @@ def bootstrap_percentage_change_confidence_interval(data1, data2, n=1000):
 results_df = pd.DataFrame()
 
 
-def performance_emoji(lower: float, upper: float, threshold: float = 3.0) ->str:
+def performance_emoji(lower: float, upper: float, threshold: float = 3.0) -> str:
     """Function to determine the emoji based on change and confidence interval."""
     if upper < -threshold:
         return "🟢"  # Emoji for faster performance
