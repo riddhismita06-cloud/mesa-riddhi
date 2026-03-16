@@ -32,18 +32,20 @@ def run_model(model_class, steps, **scenario_kwargs):
 
     # Disable GC during timed runs to avoid random slowdowns
     gc.disable()
-    start_init = time.perf_counter()
-    model = model_class(scenario=Scenario(**scenario_kwargs))
+    try:
+        start_init = time.perf_counter()
+        model = model_class(scenario=Scenario(**scenario_kwargs))
 
-    end_init_start_run = time.perf_counter()
+        end_init_start_run = time.perf_counter()
 
-    model.run_for(steps)
+        model.run_for(steps)
 
-    end_run = time.perf_counter()
-    gc.enable()  # Re-enable GC after benchmarking
+        end_run = time.perf_counter()
+        model.remove_all_agents()
+    finally:
+        gc.enable()  # Re-enable GC after benchmarking
 
-    # Clean up to avoid memory leaks
-    model.remove_all_agents()
+    
 
     # Force a final collection to reclaim memory before the next iteration
     gc.collect()
