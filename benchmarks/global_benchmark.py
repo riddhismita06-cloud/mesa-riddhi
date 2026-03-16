@@ -43,8 +43,6 @@ def run_model(model_class, steps, scenario):
     finally:
         gc.enable()  # Re-enable GC after benchmarking
 
-    
-
     # Force a final collection to reclaim memory before the next iteration
     gc.collect()
     return (end_init_start_run - start_init), (end_run - end_init_start_run)
